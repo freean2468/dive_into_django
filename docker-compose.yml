@@ -1,5 +1,7 @@
+# Specifies which syntax version of Docker compose
 version: "3.9"
    
+# Build a multiservice arhitecture.
 services:
   db:
     image: postgres
@@ -10,10 +12,15 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   web:
+  # Build an image from the files in the project root directory (Dockerfile)
     build: .
     command: python manage.py runserver 0.0.0.0:8000
+    # Mount the container `/code` folder to the a `.` folder in the location
+    # of the Dockerfile on the host machine.
     volumes:
       - .:/code
+    # Map port 8000 to port 9090 so that we can access the application on
+    # our host machine by visiting 127.0.0.1:9090
     ports:
       - "8000:8000"
     environment:

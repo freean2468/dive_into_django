@@ -8,7 +8,7 @@ https://docs.docker.com/samples/django/ 을 참고해 Dockerizing.
 
 # 실행 명령어
 
-1. sudo docker-compose run web django-admin startproject composeexample.
+1. sudo docker-compose run web django-admin startproject root.
 
 2. docker-compose up
 
@@ -25,8 +25,7 @@ https://docs.docker.com/samples/django/ 을 참고해 Dockerizing.
 2. Palette => Remote-Containers: Open Folder in Container => start from Dockerfile
 
 <!-- python manage.py dbshell 실행에 필요 -->
-
-5. apt-get install postgresql postgresql-contrib
+3. apt-get install postgresql postgresql-contrib
 
 # 장고 핵심 개념
 
@@ -46,6 +45,8 @@ You tell Django what structure you want the database to have, and Django takes c
 4. python manage.py makemigrations
 <!-- 4. python manage.py makemigrations --empty --name users users -->
 
+<!-- python manage.py check -->
+<!-- python manage.py sqlmigrate -->
 5. python manage.py migrate users
 
 <!-- python3 manage.py showmigrations -->
@@ -57,3 +58,15 @@ You tell Django what structure you want the database to have, and Django takes c
 A view is the initial entrypoint of a request made upon a specific endpoint served by a URL.
 
 This is all mapped by the Django REST framework once we connect the function itself to the endpoint.
+
+# Admin
+
+1. python manage.py createsuperuser
+
+# TDD
+
+# Cache
+
+# DDD
+
+# deploy

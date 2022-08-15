@@ -63,6 +63,10 @@ This is all mapped by the Django REST framework once we connect the function its
 
 1. python manage.py createsuperuser
 
+# Auth
+
+django 기본 인증 시스템과 DRF의 내장 인증 시스템을 사용해보자.
+
 # TDD
 
 # Cache

@@ -1,7 +1,10 @@
-from urllib import response
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes, schema
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 
 from .models import User
 from .serializers import UserSerializer
@@ -10,15 +13,43 @@ from .serializers import UserSerializer
 # Returning an HttpResponse object containing the content for the requested page, 
 # or raising an exception such as Http404.
 
-# @api_view(['GET'])
-# def users_detail(request):
-#     try:
-#         user = User.objects.get(email=id)
-#     except User.DoesNotExist:
-#         return Response(status=status.HTTP_404_NOT_FOUND)
+class CustomAuthToken(ObtainAuthToken):
+    def get(self, request, *args, **kwargs):
+        print('in CustomAuthToken : %s' % request.data)
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
 
-#     # 내 정보보기 기능
-#     return Response(status=status.HTTP_200_OK)
+        print(serializer.validated_data['user'])
+        user = serializer.validated_data['user']
+        print(user)
+        token, created = Token.objects.get_or_create(user=user)
+
+        print(token)
+
+        print(created)
+
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def users_detail(request):
+    print(str(request.user))
+    print(str(request.auth))
+
+    try:
+        user = User.objects.get(email=id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # 내 정보보기 기능
+    return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST'])
@@ -49,6 +80,9 @@ def users_signup(request):
 
     if serializer.is_valid():
         serializer.save()
+        user = serializer.Meta.model
+        token = Token.objects.create(user=user)
+        print(token.key)
         return Response(status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -59,10 +93,27 @@ def users_signup(request):
 email, phone, nickname으로 로그인이 가능해야 함. (모두 중복될 수 없음)
 """
 @api_view(['GET'])
+@schema(CustomAuthToken)
 def users_signin(request):
     # id 조회 순서 
     # email -> phone -> nickname
-    print(request.GET.get('id', ''))
+    id = request.GET.get('id', '')
+    print('id : %s' % id)
+
+    try:
+        user = User.objects.get(email=id)
+        print(user)
+    except User.DoesNotExist:
+        try:
+            user = User.objects.get(phone=id)
+            print(user)
+        except User.DoesNotExist:
+            try:
+                user = User.objects.get(nickname=id)
+                print(user)
+            except User.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+    
     return Response(status=status.HTTP_200_OK)
 
 

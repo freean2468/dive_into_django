@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'users',
     'django.contrib.admin', # The admin site.
     'django.contrib.auth', # An authentication system.
     'django.contrib.contenttypes', # A framework for content types
@@ -39,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages', #  A messaging framework.
     'django.contrib.staticfiles', # A framework for managing static files.
     'rest_framework',
-    'users'
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,9 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+AUTH_USER_MODEL = 'users.User'
+
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None

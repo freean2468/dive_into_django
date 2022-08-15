@@ -74,3 +74,13 @@ django 기본 인증 시스템과 DRF의 내장 인증 시스템을 사용해보
 # DDD
 
 # deploy
+
+# db 초기화
+
+1. in psql
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
+2. numbering된 migrations를 모두 삭제하고 
+python manage.py makemigrations
+python manage.py migrate --run-syncdb

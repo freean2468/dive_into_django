@@ -232,7 +232,7 @@ class UserTests(TestCase):
 
     def test_signin_by_email(self):
         """
-        가입한 email 요청 => 200
+        가입한 email 요청 => 200, 토큰
         """
         response=self.until_signin_by_email()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -248,7 +248,7 @@ class UserTests(TestCase):
 
     def test_signin_by_nickname(self):
         """
-        가입한 nickname 요청 => 200
+        가입한 nickname 요청 => 200, 토큰
         """
         response=self.until_signin_by_nickname()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -417,4 +417,3 @@ class UserTests(TestCase):
         """
         response=self.until_signup(p='010799783957')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-

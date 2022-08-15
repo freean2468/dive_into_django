@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 
+from .error_codes import ErrorCodes
+
 from .models import User
 from .serializers import UserSerializer
 
@@ -13,8 +15,11 @@ from .serializers import UserSerializer
 # Returning an HttpResponse object containing the content for the requested page, 
 # or raising an exception such as Http404.
 
+def ec(error_code):
+    return { 'error_code': error_code }
+
 class CustomAuthToken(ObtainAuthToken):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         print('in CustomAuthToken : %s' % request.data)
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
@@ -22,12 +27,12 @@ class CustomAuthToken(ObtainAuthToken):
 
         print(serializer.validated_data['user'])
         user = serializer.validated_data['user']
-        print(user)
+        print('user : %s' % user)
         token, created = Token.objects.get_or_create(user=user)
 
-        print(token)
+        print('token : %s' % token)
 
-        print(created)
+        print('created : %s' % created)
 
         return Response({
             'token': token.key,
@@ -80,9 +85,8 @@ def users_signup(request):
 
     if serializer.is_valid():
         serializer.save()
-        user = serializer.Meta.model
-        token = Token.objects.create(user=user)
-        print(token.key)
+        # user = serializer.Meta.model
+        # print(user)
         return Response(status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -92,29 +96,35 @@ def users_signup(request):
 로그인
 email, phone, nickname으로 로그인이 가능해야 함. (모두 중복될 수 없음)
 """
-@api_view(['GET'])
+@api_view(['POST'])
 @schema(CustomAuthToken)
 def users_signin(request):
-    # id 조회 순서 
-    # email -> phone -> nickname
-    id = request.GET.get('id', '')
-    print('id : %s' % id)
+    print(request.data)
 
     try:
-        user = User.objects.get(email=id)
-        print(user)
-    except User.DoesNotExist:
-        try:
-            user = User.objects.get(phone=id)
-            print(user)
-        except User.DoesNotExist:
-            try:
-                user = User.objects.get(nickname=id)
-                print(user)
-            except User.DoesNotExist:
-                return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    return Response(status=status.HTTP_200_OK)
+        id, password = request.data['id'], request.data['password']
+    except KeyError:
+        return Response(ec(ErrorCodes.SIGNIN_LACK_OF_POST_DATA.value), status=status.HTTP_400_BAD_REQUEST)
+
+    queryset = User.objects.filter(email=id) | User.objects.filter(phone=id) | User.objects.filter(nickname=id)
+
+    print('queryset : %s' % queryset)
+
+    if not queryset:
+        return Response(ec(ErrorCodes.SIGNIN_NOT_VALID_ID.value), status=status.HTTP_404_NOT_FOUND)
+
+    user = None
+    for q in queryset:
+        if q.password == password:
+            user = q
+            break
+
+    if user is None:
+        return Response(ec(ErrorCodes.SIGNIN_NOT_VALID_PASSWORD.value), status=status.HTTP_403_FORBIDDEN)
+
+    token, created = Token.objects.get_or_create(user=user)
+
+    return Response({ 'token': token.key }, status=status.HTTP_200_OK)
 
 
 """

@@ -10,5 +10,4 @@ urlpatterns = [
     path('signin/', views.users_signin, name='signin'),
     path('password/auth/', views.users_password_auth, name='password_auth'),
     path('password/', views.users_password, name='password'),
-    # path('', views.users_list, name=''),
 ]

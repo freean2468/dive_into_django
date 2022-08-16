@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages', #  A messaging framework.
     'django.contrib.staticfiles', # A framework for managing static files.
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'drf_spectacular'
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,20 @@ AUTH_USER_MODEL = 'users.User'
 
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+        'LOCATION': '127.0.0.1:11211'
+    }
+}
+
+REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS':'drf_spectacular.openapi.AutoSchema' }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Dive into Django API',
+    'DESCRIPTION': '장고를 느껴봅시다',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}

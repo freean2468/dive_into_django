@@ -71,9 +71,19 @@ django 기본 인증 시스템과 DRF의 내장 인증 시스템을 사용해보
 
 # Cache
 
-# DDD
+처음에는 redis를 고려했으나, 장고에서 native하게 지원하는 건 memcached라서
 
-# deploy
+Memcached 사용.
+
+# Schema
+
+https://www.django-rest-framework.org/api-guide/schemas/
+
+https://djangoadventures.com/coreapi-vs-openapi/
+
+drf-yasg보다 drf-spectacular가 더 업데이트가 잘 되고 있다.
+
+./manage.py spectacular --file schema.yml
 
 # db 초기화
 
@@ -84,3 +94,9 @@ CREATE SCHEMA public;
 2. numbering된 migrations를 모두 삭제하고 
 python manage.py makemigrations
 python manage.py migrate --run-syncdb
+
+# Type Hinting
+
+# DDD
+
+# deploy

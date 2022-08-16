@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
 
 from .error_codes import ErrorCodes
 
@@ -18,43 +17,20 @@ from .serializers import UserSerializer
 def ec(error_code):
     return { 'error_code': error_code }
 
-class CustomAuthToken(ObtainAuthToken):
-    def post(self, request, *args, **kwargs):
-        print('in CustomAuthToken : %s' % request.data)
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
-        serializer.is_valid(raise_exception=True)
-
-        print(serializer.validated_data['user'])
-        user = serializer.validated_data['user']
-        print('user : %s' % user)
-        token, created = Token.objects.get_or_create(user=user)
-
-        print('token : %s' % token)
-
-        print('created : %s' % created)
-
-        return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'email': user.email
-        })
-
-
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def users_detail(request):
-    print(str(request.user))
-    print(str(request.auth))
-
-    try:
-        user = User.objects.get(email=id)
-    except User.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    print(request.user)
+    print(request.auth)
 
     # 내 정보보기 기능
-    return Response(status=status.HTTP_200_OK)
+    return Response({
+        "email": request.user.email,
+        "phone": request.user.phone,
+        "nickname": request.user.nickname,
+        "name": request.user.name
+    },status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST'])
@@ -97,7 +73,6 @@ def users_signup(request):
 email, phone, nickname으로 로그인이 가능해야 함. (모두 중복될 수 없음)
 """
 @api_view(['POST'])
-@schema(CustomAuthToken)
 def users_signin(request):
     print(request.data)
 

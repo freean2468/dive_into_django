@@ -1,6 +1,4 @@
-from audioop import reverse
 from django.test import TestCase
-from .models import User
 from rest_framework import status
 from django.urls import reverse
 from django.core.cache import cache
@@ -58,9 +56,9 @@ class UserTests(TestCase):
         return self.client.get(reverse('users:password_auth'), {'phone': p, 'code': c})
 
 
-    def until_password(self, phone=phone, prior=password, new=new_password):
+    def until_password(self, phone=phone, new=new_password):
         self.until_authenticating_before_password()
-        return self.client.patch(reverse('users:password'), data={'phone': phone, 'prior': prior, 'new': new}, content_type='application/json')
+        return self.client.patch(reverse('users:password'), data={'phone': phone, 'new': new}, content_type='application/json')
 
 
     def test_detail(self):
@@ -135,6 +133,16 @@ class UserTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+    def test_authenticationg_after_timeout(self):
+        """
+        인증 번호 전송 후 timeout 시간이 지나 시도하면 실패
+        """
+        cache.clear()
+        self.until_sending_authcode_for_signup()
+
+        # TODO : 어떻게 구현해볼 수 있을까?
+
+
     def test_authenticating_before_signup_with_no_phone(self):
         """
         phone field가 비어 있으면
@@ -200,7 +208,6 @@ class UserTests(TestCase):
 
 
     def test_signup(self):
-        # 패스워드 암호화
         """
         유효한 phone session으로 요청
         """
@@ -491,30 +498,21 @@ class UserTests(TestCase):
     
     def test_password_with_not_signedup_password(self):
         """
-        회원가입되지 않은 password
+        회원가입되지 않은 phone
         """
         cache.clear()
-        response=self.client.patch(reverse('users:password'), {'phone': '01011112222', 'prior': '11111111', 'new': '12345678'}, content_type='application/json')
+        response=self.client.patch(reverse('users:password'), {'phone': '01011112222', 'new': '12345678'}, content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
     def test_password_with_signedup_but_not_proceeded_auth(self):
         """
-        회원가입된 password지만 변경 시도를 한 적 없는 password
+        회원가입된 phone이지만 변경 시도를 한 적 없는
         """
         cache.clear()
         response=self.until_signup()
-        response=self.client.patch(reverse('users:password'), data={'phone': phone, 'prior': '12345678', 'new': '87654321'}, content_type='application/json')
+        response=self.client.patch(reverse('users:password'), data={'phone': '01022223333', 'new': '87654321'}, content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-
-    def test_password_with_the_same(self):
-        """
-        같은 password
-        """
-        cache.clear()
-        response=self.until_password(new=password)
-        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
     
     def test_password_with_too_short_password(self):

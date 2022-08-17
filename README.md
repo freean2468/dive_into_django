@@ -31,7 +31,24 @@ docker-compose up
 <!-- python manage.py dbshell 실행에 필요 -->
 <!-- 3. apt-get install postgresql postgresql-contrib -->
 
-# 장고 핵심 개념
+## API 문서
+
+http://localhost:8000/docs/#/
+
+![api_doc](https://i.imgur.com/daIxKZa.png)
+
+
+## 서비스 흐름도
+
+![api_flow_1](https://i.imgur.com/zT3FIae.png)
+
+
+![api_flow_2](https://i.imgur.com/vXB6ABl.png)
+
+
+![api_flow_3](https://i.imgur.com/YyEeufz.png)
+
+## 장고 핵심 개념
 
 <!-- https://blog.logrocket.com/making-django-migrations-python/ -->
 
@@ -60,7 +77,7 @@ python manage.py migrate
 <!-- python manage.py sqlmigrate -->
 <!-- python3 manage.py showmigrations -->
 
-# DRF (Django REST framework)
+## DRF (Django REST framework)
 
 <!-- https://blog.logrocket.com/using-react-django-create-app-tutorial/ -->
 
@@ -72,35 +89,31 @@ This is all mapped by the Django REST framework once we connect the function its
 
 <!-- python manage.py createsuperuser -->
 
-# Auth
+## Auth
 
 django 기본 인증 시스템과 DRF의 내장 인증 시스템을 사용해 장고 환경에 적응해보자.
 
-# TDD
+## TDD
 
 8개의 API에 대해 50가지 테스트 케이스를 작성.
 테스트는 많으면 많을수록 좋다. 아직 더 작성할 테스트 케이스가 남아 있다.
 이후에 cache의 timeout 환경까지 재현해 테스트해보면 좋겠다.
 
-# Cache
+## Cache
 
 처음에는 redis를 고려했으나, 장고에서 native하게 지원하는 건 memcached라서 Memcached 사용.
 
-# Schema
+## Schema
 
 https://www.django-rest-framework.org/api-guide/schemas/
 
 https://djangoadventures.com/coreapi-vs-openapi/
 
-drf-yasg보다 drf-spectacular가 더 업데이트가 잘 되고 있다.
+drf-yasg보다 drf-spectacular가 더 업데이트가 잘 되고, OpenAPI 3.0까지 지원해준다.
 
 ```bash
 ./manage.py spectacular --file schema.yml
 ```
-
-1. API 문서
-
-http://localhost:8000/docs/#/
 
 <!-- # db 초기화
 
@@ -112,15 +125,25 @@ CREATE SCHEMA public;
 python manage.py makemigrations
 python manage.py migrate --run-syncdb -->
 
-# Type Hinting, lint
+## Type Hinting, lint
 
 Type Hinting, lint는 적용 예정,
 컨테이너로 가상화를 하니 poetry를 사용할 동기가 부족해지는 거 같다.
 
-# DDD
+## DDD
 
 도메인 분석과 데이터 종속성에 대한 고민도 다음에
 
-# deploy
+## deploy
 
 배포도 추후 도전
+
+
+## 보완해야할 점
+
+1. 현재 인증시스템으론 멀티 디바이스 로그인과 로그아웃 기능을 지원하지 못한다.
+최소한 knox로 업그레이드하거나 jwt기반의 인증시스템을 별도로 만들 필요가 있다.
+
+2. django에서 기본적으로 제공해주는 orm에서 만든 db 구조 및 해당 시스템이 어떻게 작동하는지 아직 이해가 부족하다.
+
+3. 비동기 부분이 없다. 본인 스스로가 python 환경에서의 비동기 시스템이 어떻게 작동하는지에 대한 스터디가 더 필요하다.

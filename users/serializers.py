@@ -56,7 +56,6 @@ class SignupPasswordSerializer(serializers.Serializer):
 
 class PasswordSerializer(serializers.Serializer):
     phone = serializers.CharField(min_length=11, max_length=11)
-    prior = serializers.CharField(min_length=8, max_length=24)
     new = serializers.CharField(min_length=8, max_length=24)
 
     def validate_phone(self, value):

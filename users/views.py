@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 from django.core.cache import cache
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter
 
 from .errors import Errors
 
@@ -53,6 +53,10 @@ def users_detail(request):
         tags=["user"],
         summary="회원가입 전 인증코드 확인",
         description='전달받은 인증코드가 일치하는지 유효한지 확인 후 회원가입 세션 생성',
+        parameters=[
+            OpenApiParameter(name='phone', description="11자의 핸드폰 숫자"),
+            OpenApiParameter(name='code', description="6자의 숫자")
+        ],
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 description='인증 완료',
@@ -72,6 +76,9 @@ def users_detail(request):
         tags=["user"],
         summary="회원가입 전 인증코드 전송",
         description='회원가입 전 인증코드를 유저 phone SMS로 전송',
+        parameters=[
+            OpenApiParameter(name='phone', description="11자의 핸드폰 숫자")
+        ],
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(
                 description='전송 완료',
@@ -119,6 +126,13 @@ def users_signup_auth(request):
     tags=["user"],
     summary="회원가입",
     description='email, phone, nickname, name, password',
+    parameters=[
+        OpenApiParameter(name='phone', description="11자의 핸드폰 숫자"),
+        OpenApiParameter(name='email', description="62bytes 이하의 이메일"),
+        OpenApiParameter(name='nickname', description="16bytes 이하의 닉네임"),
+        OpenApiParameter(name='name', description="32bytes 이하의 본명"),
+        OpenApiParameter(name='password', description="8bytes 이상 24bytes 이하의 비밀번호")
+    ],
     responses={
         status.HTTP_400_BAD_REQUEST: OpenApiResponse(
             description='description에 명시된 필드가 입력되지 않거나 값이 유효하지 않을 때, 중복일 때',
@@ -199,6 +213,10 @@ def users_signin(request):
         tags=['user'],
         summary='비밀번호 재설정 전 인증코드 확인',
         description='전달받은 인증코드가 일치하는지 유효한지 확인 후 비밀번호 세션 생성',
+        parameters=[
+            OpenApiParameter(name='phone', description="11자의 핸드폰 숫자"),
+            OpenApiParameter(name='code', description="6자의 숫자")
+        ],
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 description='인증 완료',
@@ -218,6 +236,9 @@ def users_signin(request):
         tags=['user'],
         summary='비밀번호 재설정 전 인증코드 전송',
         description='비밀번호 재설정 전 인증코드를 유저 phone SMS로 전송',
+        parameters=[
+            OpenApiParameter(name='phone', description="11자의 핸드폰 숫자")
+        ],
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(
                 description='전송 완료',
@@ -267,16 +288,17 @@ def users_password_auth(request):
 @extend_schema(
     tags=["user"],
     summary="비밀번호 재설정",
-    description='id(email, phone, nickname 중 하나), old_password, new_password',
+    description='id(email, phone, nickname 중 하나), password',
+    parameters=[
+        OpenApiParameter(name='id', description="(email, phone, nickname 중 하나)"),
+        OpenApiParameter(name='password', description="8bytes 이상, 24bytes 이하의 새로 원하는 비밀번호")
+    ],
     responses={
         status.HTTP_204_NO_CONTENT: OpenApiResponse(
             description='비밀번호 재설정 완료',
         ),
         status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
             description='이전 인증 절차가 없는 접근',
-        ),
-        status.HTTP_409_CONFLICT: OpenApiResponse(
-            description='똑같은 비밀번호로 변경 시도',
         ),
     },
 )
@@ -291,9 +313,6 @@ def users_password(request):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     user = User.objects.get(phone=serializer.data['phone'])
-
-    if check_password(serializer.data['new'], user.password):
-        return Response(status=status.HTTP_409_CONFLICT)
 
     user.set_password(serializer.data['new'])
     user.save()

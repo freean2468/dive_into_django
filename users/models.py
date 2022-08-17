@@ -10,7 +10,10 @@ from rest_framework.authtoken.models import Token
 
 from .managers import UserManager
 
-# A model is the single, definitive source of information about your data. It contains the essential fields and behaviors of the data you’re storing. Django follows the DRY Principle. The goal is to define your data model in one place and automatically derive things from it.
+# A model is the single, definitive source of information about your data. 
+# It contains the essential fields and behaviors of the data you’re storing. 
+# Django follows the DRY Principle. The goal is to define your data model 
+# in one place and automatically derive things from it.
 class User(AbstractUser):
     username = None
     first_name = None

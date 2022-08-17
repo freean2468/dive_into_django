@@ -99,6 +99,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -143,11 +146,13 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        'LOCATION': '127.0.0.1:11211'
+        'LOCATION': 'cache:11211'
     }
 }
 
-REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS':'drf_spectacular.openapi.AutoSchema' }
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS':'drf_spectacular.openapi.AutoSchema',
+}
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Dive into Django API',

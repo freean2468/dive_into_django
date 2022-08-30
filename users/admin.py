@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from typing import Optional, Sequence
-from django.utils.translation import gettext, gettext_lazy as _
-
-# Register your models here.
-
+from django.utils.translation import gettext_lazy as _
 from . import models
 
+
 class UserAdmin(BaseUserAdmin):
+    '''
+    Register your models here.
+    '''
     ordering: Optional[Sequence[str]] = ('email', )
     fieldsets = (
         (None, {'fields': ('nickname', 'password')}),

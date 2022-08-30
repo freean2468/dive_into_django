@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, authentication_classes, permission_classes, schema
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -7,26 +7,27 @@ from rest_framework.authtoken.models import Token
 from django.core.cache import cache
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter
-
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter # noqa
 from .errors import Errors
-
 from .models import User
-from .serializers import PasswordSerializer, AuthSerializer, PhoneSerializer, SigninSerializer, SignupPasswordSerializer, UserSerializer
-from .cache import AUTH_TIMEOUT, PASSWORD_TIMEOUT, SIGNUP_TIMEOUT, make_key_for_password, make_key_for_password_auth, make_key_for_signup, make_key_for_signup_auth
+from .serializers import PasswordSerializer, AuthSerializer, PhoneSerializer, SigninSerializer, SignupPasswordSerializer, UserSerializer # noqa
+from .cache import AUTH_TIMEOUT, PASSWORD_TIMEOUT, SIGNUP_TIMEOUT, make_key_for_password, make_key_for_password_auth, make_key_for_signup, make_key_for_signup_auth # noqa
 
-# Each view is responsible for doing one of two things: 
-# Returning an HttpResponse object containing the content for the requested page, 
-# or raising an exception such as Http404.
+'''
+Each view is responsible for doing one of two things:
+Returning an HttpResponse object containing the content for the requested page,
+or raising an exception such as Http404.
+'''
+
 
 def ec(error_code):
-    return { 'error_code': error_code.value }
+    return {'error_code': error_code.value}
 
 
 @extend_schema(
     tags=["user"],
     summary="user 정보",
-    description='header Authorization에 Token \'\{token\}\' 형식으로 요청하면 해당 토큰으로 식별 가능한 유저 정보 반환',
+    description='header Authorization에 Token token 형식으로 요청하면 해당 토큰으로 식별 가능한 유저 정보 반환',
     responses={
         status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
             description='틀린 토큰 or Authorization field가 없을 때',
@@ -45,11 +46,11 @@ def users_detail(request):
         "phone": request.user.phone,
         "nickname": request.user.nickname,
         "name": request.user.name
-    },status=status.HTTP_200_OK)
+    }, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(
-    get=extend_schema( 
+    get=extend_schema(
         tags=["user"],
         summary="회원가입 전 인증코드 확인",
         description='전달받은 인증코드가 일치하는지 유효한지 확인 후 회원가입 세션 생성',
@@ -72,7 +73,7 @@ def users_detail(request):
             )
         },
     ),
-    post=extend_schema( 
+    post=extend_schema(
         tags=["user"],
         summary="회원가입 전 인증코드 전송",
         description='회원가입 전 인증코드를 유저 phone SMS로 전송',
@@ -92,7 +93,12 @@ def users_detail(request):
 @api_view(['GET', 'POST'])
 def users_signup_auth(request):
     if request.method == 'GET':
-        serializer = AuthSerializer(data={'phone': request.GET.get('phone'), 'code': request.GET.get('code')})
+        serializer = AuthSerializer(
+            data={
+                'phone': request.GET.get('phone'),
+                'code': request.GET.get('code')
+            }
+        )
         serializer.is_valid(raise_exception=True)
 
         code = cache.get(make_key_for_signup_auth(serializer.data['phone']) or '')
@@ -104,7 +110,11 @@ def users_signup_auth(request):
             return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
         cache.delete(make_key_for_signup_auth(serializer.data['phone']))
-        cache.set(make_key_for_signup(serializer.data['phone']), serializer.data['phone'], SIGNUP_TIMEOUT)
+        cache.set(make_key_for_signup(
+            serializer.data['phone']),
+            serializer.data['phone'],
+            SIGNUP_TIMEOUT
+        )
 
         return Response(status=status.HTTP_200_OK)
     elif request.method == 'POST':
@@ -189,7 +199,11 @@ def users_signin(request):
     serializer = SigninSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    queryset = User.objects.filter(email=serializer.data['id']) | User.objects.filter(phone=serializer.data['id']) | User.objects.filter(nickname=serializer.data['id'])
+    queryset = (
+        User.objects.filter(email=serializer.data['id'])
+        | User.objects.filter(phone=serializer.data['id'])
+        | User.objects.filter(nickname=serializer.data['id'])
+    )
 
     if not queryset:
         return Response(ec(Errors.SIGNIN_NOT_VALID_ID), status=status.HTTP_404_NOT_FOUND)
@@ -205,11 +219,11 @@ def users_signin(request):
 
     token, created = Token.objects.get_or_create(user=user)
 
-    return Response({ 'token': token.key }, status=status.HTTP_200_OK)
+    return Response({'token': token.key}, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(
-    get=extend_schema( 
+    get=extend_schema(
         tags=['user'],
         summary='비밀번호 재설정 전 인증코드 확인',
         description='전달받은 인증코드가 일치하는지 유효한지 확인 후 비밀번호 세션 생성',
@@ -232,7 +246,7 @@ def users_signin(request):
             )
         },
     ),
-    post=extend_schema( 
+    post=extend_schema(
         tags=['user'],
         summary='비밀번호 재설정 전 인증코드 전송',
         description='비밀번호 재설정 전 인증코드를 유저 phone SMS로 전송',
@@ -255,7 +269,12 @@ def users_password_auth(request):
         """
         전달받은 인증코드가 일치하는지 유효한지 확인 후 비밀번호 세션 생성
         """
-        serializer = AuthSerializer(data={'phone': request.GET.get('phone'), 'code': request.GET.get('code')})
+        serializer = AuthSerializer(
+            data={
+                'phone': request.GET.get('phone'),
+                'code': request.GET.get('code')
+            }
+        )
 
         serializer.is_valid(raise_exception=True)
 
@@ -266,7 +285,7 @@ def users_password_auth(request):
 
         if code != int(request.GET.get('code')):
             return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-            
+
         cache.delete(make_key_for_password_auth(serializer.data['phone']))
         cache.set(make_key_for_password(serializer.data['phone']), True, PASSWORD_TIMEOUT)
 
@@ -279,7 +298,7 @@ def users_password_auth(request):
         serializer = PhoneSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        get_object_or_404(User, phone=serializer.data['phone'])   
+        get_object_or_404(User, phone=serializer.data['phone'])
 
         cache.set(make_key_for_password_auth(serializer.data['phone']), 150805, AUTH_TIMEOUT)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -311,7 +330,7 @@ def users_password(request):
 
     if flag is None:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
-    
+
     user = User.objects.get(phone=serializer.data['phone'])
 
     user.set_password(serializer.data['new'])

@@ -33,12 +33,12 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'users',
-    'django.contrib.admin', # The admin site.
-    'django.contrib.auth', # An authentication system.
-    'django.contrib.contenttypes', # A framework for content types
-    'django.contrib.sessions', # A session framework.
-    'django.contrib.messages', #  A messaging framework.
-    'django.contrib.staticfiles', # A framework for managing static files.
+    'django.contrib.admin',  # The admin site.
+    'django.contrib.auth',  # An authentication system.
+    'django.contrib.contenttypes',  # A framework for content types
+    'django.contrib.sessions',  # A session framework.
+    'django.contrib.messages',  # A messaging framework.
+    'django.contrib.staticfiles',  # A framework for managing static files.
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular'
@@ -151,7 +151,7 @@ CACHES = {
 }
 
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS':'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 SPECTACULAR_SETTINGS = {

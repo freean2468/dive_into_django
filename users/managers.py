@@ -13,7 +13,6 @@ class UserManager(BaseUserManager):
             raise ValueError(_('The Nickname must be set'))
         if not name:
             raise ValueError(_('The Name must be set'))
-        
 
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
@@ -25,7 +24,6 @@ class UserManager(BaseUserManager):
         Token.objects.create(user=user)
         return user
 
-    
     def create_superuser(self, email, nickname, password, name, phone, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -35,5 +33,5 @@ class UserManager(BaseUserManager):
             raise ValueError(_('Superuser must have is_staff=True.'))
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_('Superuser must have is_superuser=True.'))
-            
+
         return self.create_user(email, nickname, password, name, phone, **extra_fields)

@@ -5,3 +5,4 @@ pymemcache>=3.5.2
 pyyaml>=6.0
 uritemplate>=4.1.1
 drf-spectacular>=0.23.1
+pylama>=8.4.1

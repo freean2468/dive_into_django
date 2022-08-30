@@ -1,15 +1,22 @@
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
 from .models import User
 import re
 
-# Serializers define the API representation.
-class UserSerializer(serializers.ModelSerializer):
 
-    # defines the metadata information that our model has (database) and that must be converted to the User class.
+class UserSerializer(serializers.ModelSerializer):
+    '''
+    Serializers define the API representation.
+    '''
+
     class Meta:
+        '''
+        defines the metadata information that our model has (database) and
+        that must be converted to the User class.
+        '''
         model = User
-        fields = ('pk', 'email', 'nickname', 'password', 'name', 'phone', 'created_at', 'updated_at')
+        fields = (
+            'pk', 'email', 'nickname', 'password', 'name', 'phone', 'created_at', 'updated_at'
+        )
 
     def create(self, validated_data):
         user = super().create(validated_data)
@@ -63,4 +70,3 @@ class PasswordSerializer(serializers.Serializer):
         if m:
             raise serializers.ValidationError("phone should only contain numeric characters")
         return value
-

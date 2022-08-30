@@ -125,14 +125,18 @@ CREATE SCHEMA public;
 python manage.py makemigrations
 python manage.py migrate --run-syncdb -->
 
-## Type Hinting, lint
+## Code Quality 
+- https://realpython.com/python-code-quality/
+- VS code linter setting : https://code.visualstudio.com/docs/python/linting
+  - PEP8과 PEP 257 linter를 포함한 pylama가 좋겠다.
 
-Type Hinting, lint는 적용 예정,
-컨테이너로 가상화를 하니 poetry를 사용할 동기가 부족해지는 거 같다.
+- Type Hinting 추가해야 한다.
+- 컨테이너로 가상화를 하니 poetry를 사용할 동기가 부족해지는 거 같다.
 
-## DDD
+## 인증
 
-도메인 분석과 데이터 종속성에 대한 고민도 다음에
+1. 인증을 별도의 Microservice로 빼고 싶다. DRY : https://medium.com/@akiva10b/microservice-infrastructure-with-django-8f985e86a057
+
 
 ## deploy
 

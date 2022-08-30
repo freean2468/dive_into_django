@@ -2,6 +2,7 @@ AUTH_TIMEOUT = 300
 SIGNUP_TIMEOUT = 900
 PASSWORD_TIMEOUT = 300
 
+
 def make_key_for_signup_auth(key):
     return 'sa_%s' % key
 

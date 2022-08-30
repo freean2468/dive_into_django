@@ -1,0 +1,31 @@
+@startuml
+
+group 로그인 [POST http://localhost:8000/api/users/signin/]
+  front -> django
+  activate django
+  
+  django -> postgresql
+  activate postgresql
+  
+  postgresql -> django
+  deactivate postgresql
+  
+  django -> front : token
+  deactivate django
+end
+
+group 내정보 [GET http://localhost:8000/api/users/]
+  front -> django : token
+  activate django
+  
+  django -> postgresql
+  activate postgresql
+  
+  postgresql -> django
+  deactivate postgresql
+  
+  django -> front
+  deactivate django
+end
+
+@enduml

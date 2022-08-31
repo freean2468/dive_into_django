@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from typing import Any, Dict, List
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,17 +76,38 @@ TEMPLATES = [
 WSGI_APPLICATION = 'root.wsgi.application'
 
 
+# Custom
+
+# Authentication parameters
+# shared_security is our SDK package name,
+# this param tell the SDK which user model to use
+AUTH_USER_MODEL: str = 'shared_security.User'
+
+AUTH_USER_TABLE: str = 'users_user'  # this is the table name in the database for our users model
+
+AUTH_DB: str = 'auth_db'  # this is the name of the database holding the users model
+
+DATABASE_ROUTERS: List[str] = ['shared_security.dbrouter.AuthRouter']
+
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
+DATABASES: Dict[str, Dict[str, Any]] = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('POSTGRES_NAME'),
         'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': 'db',
-        'PORT': 5432,
+        'HOST': 'api_db',
+        'PORT': os.environ.get('POSTGRES_PORT', 5431),
+    },
+    'auth_db': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_AUTH_NAME'),
+        'USER': os.environ.get('POSTGRES_AUTH_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_AUTH_PASSWORD'),
+        'HOST': 'auth_db',
+        'PORT': os.environ.get('POSTGRES_AUTH_PORT', 5430),
     }
 }
 

@@ -3,21 +3,37 @@ version: "3.9"
    
 # Build a multiservice arhitecture.
 services:
-  db:
+  auth_db:
     image: postgres
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=auth
+      - POSTGRES_USER=auth
+      - POSTGRES_PASSWORD=auth
+    ports:
+      - "5430:5430"
+    command: -p 5430
+  api_db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=api
+      - POSTGRES_USER=api
+      - POSTGRES_PASSWORD=api
+    ports:
+      - "5431:5431"
+    command: -p 5431
+    depends_on:
+      - auth_db
   cache:
     image: memcached
     command: ["-m", "64"]
     ports:
       - "11211:11211"
     depends_on:
-      - db
+      - api_db
   auth:
     build: .
     command: python manage.py runserver 0.0.0.0:8001
@@ -26,9 +42,9 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_NAME=auth
+      - POSTGRES_USER=auth
+      - POSTGRES_PASSWORD=auth
     depends_on:
       - cache
   api:
@@ -44,8 +60,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_NAME=api
+      - POSTGRES_USER=api
+      - POSTGRES_PASSWORD=api
+      - POSTGRES_AUTH_NAME=auth
+      - POSTGRES_AUTH_USER=auth
+      - POSTGRES_AUTH_PASSWORD=auth
     depends_on:
       - auth

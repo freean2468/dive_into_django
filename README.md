@@ -18,6 +18,10 @@ django, DRF, memcached, postgresql 사용해 간단히 개발해 본 프로젝�
 docker-compose up
 ```
 
+## 의존성 관리
+
+- 컨테이너로 가상화를 하니 poetry를 사용할 동기가 부족해진다.
+
 <!-- web service 컨테이너 접속 -->
 
 <!-- 2. docker exec -it dive_into_django_web_1 /bin/bash -->
@@ -131,12 +135,12 @@ python manage.py migrate --run-syncdb -->
   - PEP8과 PEP 257 linter를 포함한 pylama가 좋겠다.
 
 - Type Hinting 추가해야 한다.
-- 컨테이너로 가상화를 하니 poetry를 사용할 동기가 부족해지는 거 같다.
 
 ## 인증
 
 1. 인증을 별도의 Microservice로 빼고 싶다. DRY : https://medium.com/@akiva10b/microservice-infrastructure-with-django-8f985e86a057
 
+![microservice_auth](https://i.imgur.com/Go8faFd.png)
 
 ## deploy
 

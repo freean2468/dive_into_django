@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',  # A framework for managing static files.
     'rest_framework',
     'rest_framework.authtoken',
-    'drf_spectacular'
+    'drf_spectacular',
+    'auth_sdk'
 ]
 
 MIDDLEWARE = [
@@ -79,15 +80,15 @@ WSGI_APPLICATION = 'root.wsgi.application'
 # Custom
 
 # Authentication parameters
-# shared_security is our SDK package name,
+# auth_sdk is our SDK package name,
 # this param tell the SDK which user model to use
-AUTH_USER_MODEL: str = 'shared_security.User'
+AUTH_USER_MODEL: str = 'auth_sdk.User'
 
 AUTH_USER_TABLE: str = 'users_user'  # this is the table name in the database for our users model
 
 AUTH_DB: str = 'auth_db'  # this is the name of the database holding the users model
 
-DATABASE_ROUTERS: List[str] = ['shared_security.dbrouter.AuthRouter']
+DATABASE_ROUTERS: List[str] = ['auth_sdk.dbrouter.AuthRouter']
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

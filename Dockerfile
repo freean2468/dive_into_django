@@ -13,7 +13,9 @@ ENV PYTHONUNBUFFERED=1
 # that directory.
 WORKDIR /code
 COPY requirements.txt /code/
+COPY ./django-neil-auth-sdk/dist/django-neil-auth-sdk-0.1.tar.gz /code/
 
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
+RUN pip install django-neil-auth-sdk-0.1.tar.gz
 COPY . /code/

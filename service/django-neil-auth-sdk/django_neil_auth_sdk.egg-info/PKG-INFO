@@ -1,0 +1,51 @@
+Metadata-Version: 2.1
+Name: django-neil-auth-sdk
+Version: 0.1
+Summary: A Django app to conduct a authentication module for the REST API.
+Home-page: https://www.example.com/
+Author: Neil
+Author-email: freean2468@gmail.com
+License: BSD-3-Clause  # Example license
+Classifier: Environment :: Web Environment
+Classifier: Framework :: Django
+Classifier: Framework :: Django :: 3.2  # Replace "X.Y" as appropriate
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content
+Requires-Python: >=3.6
+License-File: LICENSE
+
+=====
+Neil-Auth-SDK
+=====
+
+Neil-Auth-SDK is a authentication module for the REST API.
+
+Quick start
+-----------
+
+1. Add "auth_sdk" to your INSTALLED_APPS setting like this::
+
+    INSTALLED_APPS = [
+        ...
+        'auth_sdk',
+    ]
+
+2. Include the auth_sdk URLconf in your project urls.py like this::
+
+    path('auth_sdk/', include('auth_sdk.urls')),
+
+3. Run ``python manage.py migrate`` to create the auth_sdk models.
+
+4. Start the development server and visit http://127.0.0.1:8000/admin/
+   to create a user with auth (you'll need the Admin app enabled).
+
+.. 5. Visit http://127.0.0.1:8000/auth_sdk/ to participate in the poll.

@@ -71,36 +71,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'auth.wsgi.application'
 
-
-# Custom
-
-# Authentication parameters
-# shared_security is our SDK package name,
-# this param tell the SDK which user model to use
-AUTH_USER_MODEL: str = 'shared_security.User'
-
-AUTH_USER_TABLE: str = 'users_user'  # this is the table name in the database for our users model
-
-AUTH_DB: str = 'auth_db'  # this is the name of the database holding the users model
-
-DATABASE_ROUTERS: List[str] = ['shared_security.dbrouter.AuthRouter']
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES: Dict[str, Dict[str, Any]] = {
-    '''
-    현재 두 DB의 차이는 없다.
-    '''
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_NAME'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': 'auth_db',
-        'PORT': 5430,
-    },
-    'auth_db': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('POSTGRES_NAME'),
         'USER': os.environ.get('POSTGRES_USER'),

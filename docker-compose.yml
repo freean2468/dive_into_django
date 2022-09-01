@@ -6,7 +6,7 @@ services:
   auth_db:
     image: postgres
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ./data/auth_db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=auth
       - POSTGRES_USER=auth
@@ -17,7 +17,7 @@ services:
   api_db:
     image: postgres
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ./data/api_db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=api
       - POSTGRES_USER=api

@@ -26,7 +26,7 @@ def ec(error_code):
 @extend_schema(
     tags=["user"],
     summary="user 정보",
-    description='header HTTP_AUTHORIZATION에 Bearer access_token 형식으로 요청하면 해당 토큰으로 식별 가능한 유저 정보 반환',
+    description='access 토큰으로 식별된 유저 정보 반환',
     responses={
         status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
             description='틀린 토큰 or Authorization field가 없을 때',
@@ -76,9 +76,7 @@ def users_detail(request):
         tags=["user"],
         summary="회원가입 전 인증코드 전송",
         description='회원가입 전 인증코드를 유저 phone SMS로 전송',
-        parameters=[
-            OpenApiParameter(name='phone', description="11자의 핸드폰 숫자")
-        ],
+        request=PhoneSerializer,
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(
                 description='전송 완료',
@@ -134,14 +132,12 @@ def users_signup_auth(request):
 @extend_schema(
     tags=["user"],
     summary="회원가입",
-    description='email, phone, nickname, name, password',
-    parameters=[
-        OpenApiParameter(name='phone', description="11자의 핸드폰 숫자"),
-        OpenApiParameter(name='email', description="62bytes 이하의 이메일"),
-        OpenApiParameter(name='nickname', description="16bytes 이하의 닉네임"),
-        OpenApiParameter(name='name', description="32bytes 이하의 본명"),
-        OpenApiParameter(name='password', description="8bytes 이상 24bytes 이하의 비밀번호")
-    ],
+    description='''phone : 11자의 핸드폰 숫자 </br>
+                email : 62bytes 이하의 이메일 </br>
+                nickname : 16bytes 이하의 닉네임 </br>
+                name : 32bytes 이하의 본명 </br>
+                password : 8bytes 이상 24bytes 이하의 비밀번호''',
+    request=UserSerializer,
     responses={
         status.HTTP_400_BAD_REQUEST: OpenApiResponse(
             description='description에 명시된 필드가 입력되지 않거나 값이 유효하지 않을 때, 중복일 때',
@@ -178,6 +174,7 @@ def users_signup(request):
     tags=["user"],
     summary="로그인",
     description='id(email, phone, nickname 중 하나) + password 로 로그인',
+    request=SigninSerializer,
     responses={
         status.HTTP_200_OK: inline_serializer(
             name="authenticated!",
@@ -249,11 +246,9 @@ def users_signin(request):
     ),
     post=extend_schema(
         tags=['user'],
-        summary='비밀번호 재설정 전 인증코드 전송',
-        description='비밀번호 재설정 전 인증코드를 유저 phone SMS로 전송',
-        parameters=[
-            OpenApiParameter(name='phone', description="11자의 핸드폰 숫자")
-        ],
+        summary='비밀번호 재설정 전 인증코드를 유저의 핸드폰으로 SMS 전송',
+        description='phone : 유저의 11자리 핸드폰 번호',
+        request=PhoneSerializer,
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(
                 description='전송 완료',
@@ -308,11 +303,9 @@ def users_password_auth(request):
 @extend_schema(
     tags=["user"],
     summary="비밀번호 재설정",
-    description='id(email, phone, nickname 중 하나), password',
-    parameters=[
-        OpenApiParameter(name='id', description="(email, phone, nickname 중 하나)"),
-        OpenApiParameter(name='password', description="8bytes 이상, 24bytes 이하의 새로 원하는 비밀번호")
-    ],
+    description='''phone : 11자의 핸드폰 번호</br>
+                new : 새로운 비밀번호''',
+    request=PasswordSerializer,
     responses={
         status.HTTP_204_NO_CONTENT: OpenApiResponse(
             description='비밀번호 재설정 완료',

@@ -1,28 +1,60 @@
 @startuml
 
-group 로그인 [POST http://localhost:8000/api/users/signin/]
+group 로그인 [POST api/users/signin/]
   front -> django
   activate django
   
-  django -> postgresql
-  activate postgresql
+  group 토큰발급 [POST api/token/]
+    django -> postgresql
+    activate postgresql
   
-  postgresql -> django
-  deactivate postgresql
+    postgresql -> django
+    deactivate postgresql
+  end
   
   django -> front : token
   deactivate django
 end
 
-group 내정보 [GET http://localhost:8000/api/users/]
-  front -> django : token
+group 내정보 [GET /api/users/]
+  front -> django : access
   activate django
+  
+  django -> cache : get(/api/users:email)
+  activate cache
+  
+  == Miss ==
+  
+  cache -> django
+  deactivate cache
   
   django -> postgresql
   activate postgresql
   
   postgresql -> django
   deactivate postgresql
+  
+  django -> cache : set(/api/users:email)
+  activate cache
+  
+  cache -> django
+  deactivate cache
+  
+  django -> front
+  deactivate django
+end
+
+group 내정보 [GET /api/users/]
+  front -> django : access
+  activate django
+  
+  django -> cache : get(/api/users:email)
+  activate cache
+  
+  == Hit ==
+  
+  cache -> django
+  deactivate cache
   
   django -> front
   deactivate django

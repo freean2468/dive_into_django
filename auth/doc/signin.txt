@@ -4,14 +4,12 @@ group 로그인 [POST api/users/signin/]
   front -> django
   activate django
   
-  group 토큰발급 [POST api/token/]
-    django -> postgresql
-    activate postgresql
-  
-    postgresql -> django
-    deactivate postgresql
-  end
-  
+  django -> postgresql
+  activate postgresql
+
+  postgresql -> django
+  deactivate postgresql
+    
   django -> front : token
   deactivate django
 end

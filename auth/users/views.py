@@ -1,16 +1,18 @@
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.cache import cache
 from django.contrib.auth.hashers import check_password
-from django.shortcuts import get_object_or_404, redirect
-from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter, inline_serializer # noqa
+from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter, inline_serializer  # noqa
+from auth.token import get_tokens_for_user
 from .errors import Errors
 from .models import User
-from .serializers import PasswordSerializer, AuthSerializer, PhoneSerializer, SigninSerializer, SignupPasswordSerializer, UserSerializer # noqa
-from .cache import AUTH_TIMEOUT, PASSWORD_TIMEOUT, SIGNUP_TIMEOUT, make_key_for_password, make_key_for_password_auth, make_key_for_signup, make_key_for_signup_auth # noqa
+from .serializers import PasswordSerializer, AuthSerializer, PhoneSerializer, SigninSerializer, SignupPasswordSerializer, UserSerializer  # noqa
+from .cache import AUTH_TIMEOUT, PASSWORD_TIMEOUT, SIGNUP_TIMEOUT, make_key_for_password, make_key_for_password_auth, make_key_for_signup, make_key_for_signup_auth  # noqa
 
 '''
 Each view is responsible for doing one of two things:
@@ -39,7 +41,7 @@ def ec(error_code):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def users_detail(request):
+def users_detail(request: Request):
     return Response({
         "email": request.user.email,
         "phone": request.user.phone,
@@ -88,7 +90,7 @@ def users_detail(request):
     ),
 )
 @api_view(['GET', 'POST'])
-def users_signup_auth(request):
+def users_signup_auth(request: Request):
     if request.method == 'GET':
         serializer = AuthSerializer(
             data={
@@ -151,7 +153,7 @@ def users_signup_auth(request):
     },
 )
 @api_view(['POST'])
-def users_signup(request):
+def users_signup(request: Request):
     password_serializer = SignupPasswordSerializer(data={'password': request.data['password']})
     password_serializer.is_valid(raise_exception=True)
 
@@ -177,7 +179,7 @@ def users_signup(request):
     request=SigninSerializer,
     responses={
         status.HTTP_200_OK: inline_serializer(
-            name="authenticated!",
+            name="authenticated",
             fields={
                 'access': serializers.CharField(),
                 'refresh': serializers.CharField(),
@@ -195,7 +197,7 @@ def users_signup(request):
     },
 )
 @api_view(['POST'])
-def users_signin(request):
+def users_signin(request: Request):
     serializer = SigninSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
@@ -217,7 +219,7 @@ def users_signin(request):
     if user is None:
         return Response(ec(Errors.SIGNIN_NOT_VALID_PASSWORD), status=status.HTTP_403_FORBIDDEN)
 
-    return redirect('api/token/', email=user.email, password=user.password)
+    return Response(get_tokens_for_user(user), status=status.HTTP_200_OK)
 
 
 @extend_schema_view(
@@ -260,7 +262,7 @@ def users_signin(request):
     ),
 )
 @api_view(['GET', 'POST'])
-def users_password_auth(request):
+def users_password_auth(request: Request):
     if request.method == 'GET':
         """
         전달받은 인증코드가 일치하는지 유효한지 확인 후 비밀번호 세션 생성
@@ -316,7 +318,7 @@ def users_password_auth(request):
     },
 )
 @api_view(['PATCH'])
-def users_password(request):
+def users_password(request: Request):
     serializer = PasswordSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 

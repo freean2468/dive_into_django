@@ -15,10 +15,10 @@ class User(AbstractUser):
     first_name = None
     last_name = None
 
-    email = models.EmailField("Email", max_length=64, unique=True)
-    nickname = models.CharField("Nickname", max_length=16, unique=True)
-    password = models.CharField("Password", max_length=128)
-    name = models.CharField("Name", max_length=32)
+    email = models.EmailField("Email", max_length=63, unique=True)
+    nickname = models.CharField("Nickname", max_length=15, unique=True)
+    password = models.CharField("Password", max_length=127)
+    name = models.CharField("Name", max_length=31)
     phone = models.CharField("Phone", max_length=11, unique=True)
 
     USERNAME_FIELD: str = 'email'

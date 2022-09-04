@@ -142,11 +142,9 @@ python manage.py migrate --run-syncdb -->
 
 ![microservice_auth](https://i.imgur.com/Go8faFd.png)
 
-2. 위의 1번에서 좀 더 발전시켜서 아예 외부에 Auth Service 노출을 없애고,
+2. 위의 1번에서 좀 더 발전시켜서 token을 Cache level까지만 저장해 사용하도록
 
-내부망에서 서비스끼리만 통신하도록 하면 보안적으로 더 좋지 않을까? -> 네트워크 부담이 증가하겠지만
-
-![my_microservice_auth](https://i.imgur.com/A8XY3P7.png)
+![my_microservice_auth](https://i.imgur.com/behgucj.png)
 배포 환경을 고려해 보면 이렇게 가정해볼 수 있겠다.
 
 이걸 고려해서 도커 개발 환경을 이렇게 구성해보자.

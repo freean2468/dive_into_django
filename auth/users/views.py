@@ -1,7 +1,8 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.cache import cache
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import get_object_or_404, redirect
@@ -25,7 +26,7 @@ def ec(error_code):
 @extend_schema(
     tags=["user"],
     summary="user 정보",
-    description='header Authorization에 Token token 형식으로 요청하면 해당 토큰으로 식별 가능한 유저 정보 반환',
+    description='header HTTP_AUTHORIZATION에 Bearer access_token 형식으로 요청하면 해당 토큰으로 식별 가능한 유저 정보 반환',
     responses={
         status.HTTP_401_UNAUTHORIZED: OpenApiResponse(
             description='틀린 토큰 or Authorization field가 없을 때',
@@ -36,6 +37,7 @@ def ec(error_code):
     },
 )
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def users_detail(request):
     return Response({

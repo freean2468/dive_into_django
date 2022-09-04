@@ -1,4 +1,3 @@
-from pickle import TRUE
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 import uuid
@@ -13,7 +12,7 @@ class User(AbstractBaseUser):
     https://docs.djangoproject.com/en/3.2/topics/db/models/
     User class model used for authentication
     """
-    usename = models.CharField(max_length=255, unique=TRUE, blank=False)
+    usename = models.CharField(max_length=255, unique=True, blank=False)
     jwt_secret = models.UUIDField(default=uuid.uuid4)
 
     class Meta:

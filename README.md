@@ -45,12 +45,15 @@ http://localhost:8000/docs/#/
 ## API Sequence Diagram
 
 1. Sign-up
+
 ![sign_up](https://i.imgur.com/zT3FIae.png)
 
 2. Password
+
 ![password](https://i.imgur.com/vXB6ABl.png)
 
 3. Sign-in
+
 ![sign_in](https://i.imgur.com/YNAubdd.png)
 
 ## 장고 핵심 개념
@@ -156,6 +159,18 @@ python manage.py migrate --run-syncdb -->
 
 배포도 추후 도전
 
+
+## Cache
+
+1. Cache Strategies : https://www.linkedin.com/pulse/cache-layer-application-akash-thakur/
+2. Python + Memcached : https://realpython.com/python-memcache-efficient-caching/
+3. Memcached / Redis / Ehcache 비교 : https://datajoy.tistory.com/183
+4. Django + Redis : https://realpython.com/caching-in-django-with-redis/
+
+- 고려사항
+  - 어떻게 cache가 최신인지 보장할 것인가?
+  - Eviction Strategy는?
+  - 배포 환경을 고려해보면 Memcached 보다는 Redis를 사용하는 게 더 맞을 것 같다.
 
 ## 보완해야할 점
 

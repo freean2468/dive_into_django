@@ -20,7 +20,9 @@ docker-compose up
 
 ## 의존성 관리
 
-- 컨테이너로 가상화를 하니 poetry를 사용할 동기가 부족해진다.
+~~- 컨테이너로 가상화를 하니 poetry를 사용할 동기가 부족해진다.~~
+ - 고려사항
+  - 기술부채에 대한 고민
 
 <!-- web service 컨테이너 접속 -->
 
@@ -99,7 +101,11 @@ This is all mapped by the Django REST framework once we connect the function its
 
 ## Auth
 
-django 기본 인증 시스템과 DRF의 내장 인증 시스템을 사용해 장고 환경에 적응해보자.
+~~django 기본 인증 시스템과 DRF의 내장 인증 시스템을 사용해 장고 환경에 적응해보자.~~
+1. DRY : JWT를 Django와 잘 녹여낸 Best Practice를 찾아보자.
+  - JWT with django-rest-framework-simplejwt(https://django-rest-framework-simplejwt.readthedocs.io/en/latest/creating_tokens_manually.html)
+    - https://medium.com/geekculture/jwt-authentication-in-django-part-1-implementing-the-backend-b7c58ab9431b
+    - https://www.remoteinning.com/blog/how-to-use-jwt-authentication-with-django-rest-framework
 
 ## TDD
 
@@ -109,7 +115,18 @@ django 기본 인증 시스템과 DRF의 내장 인증 시스템을 사용해 �
 
 ## Cache
 
-처음에는 redis를 고려했으나, 장고에서 native하게 지원하는 건 memcached라서 Memcached 사용.
+~~처음에는 redis를 고려했으나, 장고에서 native하게 지원하는 건 memcached라서 Memcached 사용.~~
+
+1. Cache Strategies : https://www.linkedin.com/pulse/cache-layer-application-akash-thakur/
+2. Python + Memcached : https://realpython.com/python-memcache-efficient-caching/
+3. Memcached / Redis / Ehcache 비교 : https://datajoy.tistory.com/183
+4. Django + Redis : https://realpython.com/caching-in-django-with-redis/
+
+- 고려사항
+  - 어떻게 cache가 최신인지 보장할 것인가?
+  - Eviction Strategy는?
+  - 배포 환경을 고려해보면 Memcached 보다는 Redis를 사용하는 게 더 맞을 것 같다.
+
 
 ## Schema
 
@@ -133,12 +150,14 @@ CREATE SCHEMA public;
 python manage.py makemigrations
 python manage.py migrate --run-syncdb -->
 
+
 ## Code Quality 
 - https://realpython.com/python-code-quality/
 - VS code linter setting : https://code.visualstudio.com/docs/python/linting
   - PEP8과 PEP 257 linter를 포함한 pylama가 좋겠다.
 
 - Type Hinting 추가해야 한다.
+
 
 ## 인증
 
@@ -155,22 +174,11 @@ python manage.py migrate --run-syncdb -->
 
 3. Service A 혹은 Service B 에서 SDK를 활용한 Auth Service 이용에 대한 고민은 과제 범위 빠깥이다. 이는 추후에 A, B에 대한 간단한 Service를 별도로 생각해보고 테슽해보면 좋겠다.
 
+
 ## deploy
 
 배포도 추후 도전
 
-
-## Cache
-
-1. Cache Strategies : https://www.linkedin.com/pulse/cache-layer-application-akash-thakur/
-2. Python + Memcached : https://realpython.com/python-memcache-efficient-caching/
-3. Memcached / Redis / Ehcache 비교 : https://datajoy.tistory.com/183
-4. Django + Redis : https://realpython.com/caching-in-django-with-redis/
-
-- 고려사항
-  - 어떻게 cache가 최신인지 보장할 것인가?
-  - Eviction Strategy는?
-  - 배포 환경을 고려해보면 Memcached 보다는 Redis를 사용하는 게 더 맞을 것 같다.
 
 ## 보완해야할 점
 

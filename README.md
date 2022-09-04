@@ -42,15 +42,16 @@ http://localhost:8000/docs/#/
 ![api_doc](https://i.imgur.com/daIxKZa.png)
 
 
-## 서비스 흐름도
+## API Sequence Diagram
 
-![api_flow_1](https://i.imgur.com/zT3FIae.png)
+1. Sign-up
+![sign_up](https://i.imgur.com/zT3FIae.png)
 
+2. Password
+![password](https://i.imgur.com/vXB6ABl.png)
 
-![api_flow_2](https://i.imgur.com/vXB6ABl.png)
-
-
-![api_flow_3](https://i.imgur.com/YyEeufz.png)
+3. Sign-in
+![sign_in](https://i.imgur.com/YNAubdd.png)
 
 ## 장고 핵심 개념
 

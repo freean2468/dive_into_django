@@ -1,5 +1,5 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import User
 import re
 
 
@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
         defines the metadata information that our model has (database) and
         that must be converted to the User class.
         '''
-        model = User
+        model = get_user_model()
         fields = (
             'pk', 'email', 'nickname', 'password', 'name', 'phone', 'created_at', 'updated_at'
         )

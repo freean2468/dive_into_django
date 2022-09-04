@@ -1,12 +1,10 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authtoken.models import Token
 from django.core.cache import cache
 from django.contrib.auth.hashers import check_password
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter # noqa
 from .errors import Errors
 from .models import User
@@ -38,7 +36,6 @@ def ec(error_code):
     },
 )
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def users_detail(request):
     return Response({
@@ -217,9 +214,9 @@ def users_signin(request):
     if user is None:
         return Response(ec(Errors.SIGNIN_NOT_VALID_PASSWORD), status=status.HTTP_403_FORBIDDEN)
 
-    token, created = Token.objects.get_or_create(user=user)
+    print(user.email, user.password)
 
-    return Response({'token': token.key}, status=status.HTTP_200_OK)
+    return redirect('api/token/', email=user.email, password=user.password)
 
 
 @extend_schema_view(

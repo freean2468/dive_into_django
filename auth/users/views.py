@@ -1,12 +1,12 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.cache import cache
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import get_object_or_404, redirect
-from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter # noqa
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter, inline_serializer # noqa
 from .errors import Errors
 from .models import User
 from .serializers import PasswordSerializer, AuthSerializer, PhoneSerializer, SigninSerializer, SignupPasswordSerializer, UserSerializer # noqa
@@ -179,8 +179,12 @@ def users_signup(request):
     summary="로그인",
     description='id(email, phone, nickname 중 하나) + password 로 로그인',
     responses={
-        status.HTTP_200_OK: OpenApiResponse(
-            description='token(이후 API 요청에 필요)',
+        status.HTTP_200_OK: inline_serializer(
+            name="authenticated!",
+            fields={
+                'access': serializers.CharField(),
+                'refresh': serializers.CharField(),
+            }
         ),
         status.HTTP_400_BAD_REQUEST: OpenApiResponse(
             description='필드 입력 값이 없을 때',
@@ -215,8 +219,6 @@ def users_signin(request):
 
     if user is None:
         return Response(ec(Errors.SIGNIN_NOT_VALID_PASSWORD), status=status.HTTP_403_FORBIDDEN)
-
-    print(user.email, user.password)
 
     return redirect('api/token/', email=user.email, password=user.password)
 

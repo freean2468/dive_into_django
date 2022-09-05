@@ -109,9 +109,10 @@ This is all mapped by the Django REST framework once we connect the function its
 
 ## TDD
 
-8개의 API에 대해 50가지 테스트 케이스를 작성.
-테스트는 많으면 많을수록 좋다. 아직 더 작성할 테스트 케이스가 남아 있다.
-이후에 cache의 timeout 환경까지 재현해 테스트해보면 좋겠다.
+~~8개의 API에 대해 50가지 테스트 케이스를 작성. 테스트는 많으면 많을수록 좋다. 아직 더 작성할 테스트 케이스가 남아 있다. 이후에 cache의 timeout 환경까지 재현해 테스트해보면 좋겠다.~~
+
+1. Model, View 별로 TestClass 분리,
+2. TestClass 내에서 각 시나리오 별로 Test Method 작성
 
 ## Cache
 

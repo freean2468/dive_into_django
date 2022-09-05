@@ -126,6 +126,7 @@ This is all mapped by the Django REST framework once we connect the function its
   - 어떻게 cache가 최신인지 보장할 것인가?
   - Eviction Strategy는?
   - 배포 환경을 고려해보면 Memcached 보다는 Redis를 사용하는 게 더 맞을 것 같다.
+    - Redis VS Memcached (https://stackoverflow.com/questions/10558465/memcached-vs-redis?answertab=votes#tab-top)
 
 
 ## Schema
@@ -172,7 +173,7 @@ python manage.py migrate --run-syncdb -->
 
 이걸 고려해서 도커 개발 환경을 이렇게 구성해보자.
 
-3. Service A 혹은 Service B 에서 SDK를 활용한 Auth Service 이용에 대한 고민은 과제 범위 빠깥이다. 이는 추후에 A, B에 대한 간단한 Service를 별도로 생각해보고 테슽해보면 좋겠다.
+3. Service A 혹은 Service B 에서 SDK를 활용한 Auth Service 이용에 대한 고민은 과제 범위 빠깥이다. 이는 추후에 A, B에 대한 간단한 Service를 별도로 생각해보고 테스트해보면 좋겠다.
 
 
 ## deploy
@@ -187,3 +188,5 @@ python manage.py migrate --run-syncdb -->
 ~~2. django에서 기본적으로 제공해주는 orm에서 만든 db 구조 및 해당 시스템이 어떻게 작동하는지 아직 이해가 부족하다.~~
 
 ~~3. 비동기 부분이 없다. 본인 스스로가 python 환경에서의 비동기 시스템이 어떻게 작동하는지에 대한 스터디가 더 필요하다.~~
+
+4. Django Debug Toolbar(https://github.com/jazzband/django-debug-toolbar)와 loadtest로 performance check

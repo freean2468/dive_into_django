@@ -5,11 +5,14 @@ from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.cache import cache
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter, inline_serializer  # noqa
+from django.views.decorators.cache import cache_page
+from django.conf import settings
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter, inline_serializer
 from auth.token import get_tokens_for_user
-from .errors import Errors
+from .errors import Errors, ec
 from .models import User
 from .serializers import PasswordSerializer, AuthSerializer, PhoneSerializer, SigninSerializer, SignupPasswordSerializer, UserSerializer  # noqa
 from .cache import AUTH_TIMEOUT, PASSWORD_TIMEOUT, SIGNUP_TIMEOUT, make_key_for_password, make_key_for_password_auth, make_key_for_signup, make_key_for_signup_auth  # noqa
@@ -20,9 +23,7 @@ Returning an HttpResponse object containing the content for the requested page,
 or raising an exception such as Http404.
 '''
 
-
-def ec(error_code):
-    return {'error_code': error_code.value}
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 
 @extend_schema(
@@ -41,6 +42,7 @@ def ec(error_code):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
+@cache_page(CACHE_TTL)
 def users_detail(request: Request):
     return Response({
         "email": request.user.email,

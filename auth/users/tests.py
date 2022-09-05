@@ -692,9 +692,9 @@ class DetailTests(TestCase):
         '''
         회원가입 후 회원정보
         '''
-        header = {'Authorization': 'Bearer %s' % self.response.data['access']}
+        header = {'Authorization': f'Bearer {self.response.data["access"]}'}
         client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION='Bearer %s' % self.response.data['access'])
+        client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.response.data["access"]}')
         response = client.get(reverse('users:detail'), **header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['email'], EMAIL)
@@ -706,16 +706,15 @@ class DetailTests(TestCase):
         '''
         아무 토큰으로 회원정보
         '''
-        header = {'Authorization': 'Bearer %s' % 'aijdf;oaije;aif'}
+        header = {'Authorization': 'Bearer aijdf;oaije;aif'}
         client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION='Bearer %s' % 'aijdf;oaije;aif')
+        client.credentials(HTTP_AUTHORIZATION='Bearer aijdf;oaije;aif')
         response = client.get(reverse('users:detail'), **header)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_detail_cache_response_time(self):
         '''
-        2번째 요청부터는 첫 번째 요청보다 응답 속도가 빨라야 하는 게 정상 같은데...
-        가끔씩 실패할 때가 있다.
+        2번째 요청부터는 첫 번째 요청보다 응답 속도가 빨라야 하는 게 정상 같은데... 가끔씩 실패할 때가 있다.
         '''
         cache.clear()
         second_start = time.time()
@@ -731,11 +730,33 @@ class DetailTests(TestCase):
         '''
         TestAccessToken.lifetime = timedelta(seconds=0.1)
         user = User.objects.get(email=EMAIL)
-
-        access = str(TestRefreshToken.for_user(user).access_token)
-        header = {'Authorization': 'Bearer {access}'}
+        refresh = TestRefreshToken.for_user(user)
+        access = str(refresh.access_token)
+        header = {'Authorization': f'Bearer {access}'}
         client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
+        client.credentials(HTTP_AUTHORIZATION=f'Bearer {access}')
         time.sleep(0.2)
         response = client.get(reverse('users:detail'), **header)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        '''
+        refresh token으로 재발급 후 detail 요청
+        '''
+        response = self.client.post(reverse('token_refresh'), {'refresh': str(refresh)})
+        access = response.data['access']
+        header = {'Authorization': f'Bearer {access}'}
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION=f'Bearer {access}')
+        response = client.get(reverse('users:detail'), **header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_detail_after_refresh_token_expired(self):
+        '''
+        refresh token이 만료
+        '''
+        TestRefreshToken.lifetime = timedelta(seconds=0.1)
+        user = User.objects.get(email=EMAIL)
+        refresh = TestRefreshToken.for_user(user)
+        time.sleep(0.2)
+        response = self.client.post(reverse('token_refresh'), {'refresh': str(refresh)})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

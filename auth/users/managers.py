@@ -1,4 +1,4 @@
-from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import BaseUserManager
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -14,11 +14,9 @@ class UserManager(BaseUserManager):
             raise ValueError(_('The Name must be set'))
 
         email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+
+        user = self.model(email=email, phone=phone, nickname=nickname, name=name, **extra_fields)
         user.set_password(password)
-        user.phone = phone
-        user.nickname = nickname
-        user.name = name
         user.save()
         return user
 

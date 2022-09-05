@@ -10,7 +10,7 @@ from django.contrib.auth.hashers import check_password
 from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
 from django.conf import settings
-from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter, inline_serializer
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter, inline_serializer  # noqa
 from auth.token import get_tokens_for_user
 from .errors import Errors, ec
 from .models import User

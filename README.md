@@ -21,7 +21,7 @@ docker-compose up
 ## 의존성 관리
 
 ~~- 컨테이너로 가상화를 하니 poetry를 사용할 동기가 부족해진다.~~
- - 고려사항
+- 고려사항
   - 기술부채에 대한 고민
 
 <!-- web service 컨테이너 접속 -->
@@ -116,8 +116,13 @@ This is all mapped by the Django REST framework once we connect the function its
 
 ```bash
 docker exec -it dive_into_django_auth_1 /bin/bash
-./manage.py test
+coverage run --source='.' manage.py test
+coverage report
 ```
+
+- coverage
+
+![coverage](https://i.imgur.com/6mNUksJ.png)
 
 ## Cache
 

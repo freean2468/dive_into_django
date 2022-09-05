@@ -39,9 +39,9 @@ docker-compose up
 
 ## API 문서
 
-http://localhost:8000/docs/#/
+http://localhost:8001/docs/#/
 
-![api_doc](https://i.imgur.com/daIxKZa.png)
+![open_api_doc](https://i.imgur.com/timJRAz.png)
 
 
 ## API Sequence Diagram
@@ -75,7 +75,7 @@ You tell Django what structure you want the database to have, and Django takes c
 
 ```bash
 # 컨테이너 내부로 접속
-docker exec -it dive_into_django_web_1 /bin/bash
+docker exec -it dive_into_django_auth_1 /bin/bash
 
 # DB migration
 python manage.py makemigrations
@@ -114,6 +114,11 @@ This is all mapped by the Django REST framework once we connect the function its
 1. Model, View 별로 TestClass 분리,
 2. TestClass 내에서 각 시나리오 별로 Test Method 작성
 
+```bash
+docker exec -it dive_into_django_auth_1 /bin/bash
+./manage.py test
+```
+
 ## Cache
 
 ~~처음에는 redis를 고려했으나, 장고에서 native하게 지원하는 건 memcached라서 Memcached 사용.~~
@@ -128,6 +133,13 @@ This is all mapped by the Django REST framework once we connect the function its
   - Eviction Strategy는?
   - 배포 환경을 고려해보면 Memcached 보다는 Redis를 사용하는 게 더 맞을 것 같다.
     - Redis VS Memcached (https://stackoverflow.com/questions/10558465/memcached-vs-redis?answertab=votes#tab-top)
+
+```bash
+docker exec -it dive_into_django_cache_1 /bin/bash
+redis-cli
+AUTH eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+keys *
+```
 
 
 ## Schema
@@ -170,6 +182,7 @@ python manage.py migrate --run-syncdb -->
 2. 위의 1번에서 좀 더 발전시켜서 token을 Cache level까지만 저장해 사용하도록
 
 ![my_microservice_auth](https://i.imgur.com/behgucj.png)
+
 배포 환경을 고려해 보면 이렇게 가정해볼 수 있겠다.
 
 이걸 고려해서 도커 개발 환경을 이렇게 구성해보자.
@@ -189,7 +202,6 @@ python manage.py migrate --run-syncdb -->
 ~~2. django에서 기본적으로 제공해주는 orm에서 만든 db 구조 및 해당 시스템이 어떻게 작동하는지 아직 이해가 부족하다.~~
 
 ~~3. 비동기 부분이 없다. 본인 스스로가 python 환경에서의 비동기 시스템이 어떻게 작동하는지에 대한 스터디가 더 필요하다.~~
+    ~~- Multiprocessing, Threading, Asyncio 활용~~
 
 4. Django Debug Toolbar(https://github.com/jazzband/django-debug-toolbar)와 loadtest로 performance check
-
-5. Multiprocessing, Threading, Asyncio 활용

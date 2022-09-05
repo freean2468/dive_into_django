@@ -28,10 +28,15 @@ services:
     depends_on:
       - auth_db
   cache:
-    image: memcached
-    command: ["-m", "64"]
+    image: redis:7.0
+    restart: always
     ports:
-      - "11211:11211"
+      - "6379:6379"
+    # instructs the server to save 1 or more writes every 20 seconds to disk in case the server restarts.
+    # --requirepass parameter to add authentication with the password to read/write data on the Redis server. 
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - ./data/cache:/data/cache
     depends_on:
       - api_db
   auth:

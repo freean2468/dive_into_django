@@ -144,11 +144,17 @@ AUTH_USER_MODEL = 'users.User'
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
+# 15 minutes.
+CACHE_TTL = 60 * 15
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        'LOCATION': 'cache:11211'
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://cache:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
+        },
+        'KEY_PREFIX': 'neil'
     }
 }
 

@@ -1,8 +1,12 @@
+from django.db.utils import IntegrityError
 from django.test import TestCase
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from django.urls import reverse
 from django.core.cache import cache
 from rest_framework.test import APIClient
+from users.models import User
+from users.serializers import UserSerializer
 
 EMAIL = 'freean2468@gmail.com'
 PHONE = '01079978395'
@@ -17,6 +21,179 @@ a separate TestClass for each model or view
 a separate test method for each set of conditions you want to test
 test method names that describe their function
 '''
+
+
+class UsersTests(TestCase):
+    def setUp(self):
+        '''
+        실제 View 에서는 UserSerializer를 통해 user를 생성하고 있으므로
+        User.objects(Manager)를 통한 user 생성 검증은 큰 의미가 없다.
+        '''
+        User.objects.create_user(
+            email=EMAIL,
+            phone=PHONE,
+            password=PASSWORD,
+            nickname=NICKNAME,
+            name=NAME
+        )
+
+    def test_created_user(self):
+        user: User = User.objects.get(email=EMAIL)
+        self.assertEqual(user.email, EMAIL)
+
+        user: User = User.objects.get(phone=PHONE)
+        self.assertEqual(user.phone, PHONE)
+
+        user: User = User.objects.get(nickname=NICKNAME)
+        self.assertEqual(user.nickname, NICKNAME)
+
+    def test_create_user_duplicated_by_user_manager(self):
+        self.assertRaises(
+            IntegrityError,
+            User.objects.create_user,
+            email=EMAIL,
+            phone=PHONE,
+            password=PASSWORD,
+            nickname=NICKNAME,
+            name=NAME
+        )
+
+    def test_create_user_duplicated_by_user_serializer(self):
+        serializer = UserSerializer(data={
+            'email': EMAIL,
+            'phone': PHONE,
+            'password': PASSWORD,
+            'nickname': NICKNAME,
+            'name': NAME
+        })
+
+        self.assertRaises(
+            ValidationError,
+            serializer.is_valid,
+            raise_exception=True
+        )
+
+    def test_create_user_without_email_by_user_manager(self):
+        self.assertRaises(
+            TypeError,
+            User.objects.create_user,
+            phone='01011112222',
+            password='1234',
+            nickname='nick',
+            name='name'
+        )
+
+    def test_create_user_without_email_by_user_serializer(self):
+        serializer = UserSerializer(data={
+            'phone': '01011112222',
+            'password': '1234',
+            'nickname': 'nick',
+            'name': 'name'
+        })
+
+        self.assertRaises(
+            ValidationError,
+            serializer.is_valid,
+            raise_exception=True
+        )
+
+    def test_create_user_with_not_valid_email_by_user_manager(self):
+        self.assertRaises(
+            ValueError,
+            User.objects.create_user,
+            email='',
+            phone='01011112222',
+            password='1234',
+            nickname='nick',
+            name='name'
+        )
+
+    def test_create_user_with_not_valid_email_by_user_serializer(self):
+        serializer = UserSerializer(data={
+            'email': 'hi',
+            'phone': '01011112222',
+            'password': '1234',
+            'nickname': 'nick',
+            'name': 'name'
+        })
+
+        self.assertRaises(
+            ValidationError,
+            serializer.is_valid,
+            raise_exception=True
+        )
+
+    def test_create_user_without_phone_by_user_serializer(self):
+        serializer = UserSerializer(data={
+            'email': 'hi',
+            'password': '1234',
+            'nickname': 'nick',
+            'name': 'name'
+        })
+
+        self.assertRaises(
+            ValidationError,
+            serializer.is_valid,
+            raise_exception=True
+        )
+
+    def test_create_user_with_not_valid_phone_by_user_serializer(self):
+        serializer = UserSerializer(data={
+            'email': 'hi',
+            'phone': '0101111222',
+            'password': '1234',
+            'nickname': 'nick',
+            'name': 'name'
+        })
+
+        self.assertRaises(
+            ValidationError,
+            serializer.is_valid,
+            raise_exception=True
+        )
+
+        serializer = UserSerializer(data={
+            'email': 'hi',
+            'phone': '0101111222a',
+            'password': '1234',
+            'nickname': 'nick',
+            'name': 'name'
+        })
+
+        self.assertRaises(
+            ValidationError,
+            serializer.is_valid,
+            raise_exception=True
+        )
+
+    def test_create_user_without_password_by_user_serializer(self):
+        serializer = UserSerializer(data={
+            'email': 'fran2468@gmail.com',
+            'phone': '01011112222',
+            'nickname': 'nick',
+            'name': 'name'
+        })
+
+        self.assertRaises(
+            ValidationError,
+            serializer.is_valid,
+            raise_exception=True
+        )
+
+    def test_create_user_with_not_valid_password_by_user_serializer(self):
+        serializer = UserSerializer(data={
+            'email': 'fran2468@gmail.com',
+            'phone': '01011112222',
+            'password': '',
+            'nickname': 'nick',
+            'name': 'name'
+        })
+
+        self.assertRaises(
+            ValidationError,
+            serializer.is_valid,
+            raise_exception=True
+        )
 
 
 class SignupAuthTests(TestCase):

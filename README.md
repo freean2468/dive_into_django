@@ -191,3 +191,5 @@ python manage.py migrate --run-syncdb -->
 ~~3. 비동기 부분이 없다. 본인 스스로가 python 환경에서의 비동기 시스템이 어떻게 작동하는지에 대한 스터디가 더 필요하다.~~
 
 4. Django Debug Toolbar(https://github.com/jazzband/django-debug-toolbar)와 loadtest로 performance check
+
+5. Multiprocessing, Threading, Asyncio 활용

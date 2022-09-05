@@ -712,6 +712,12 @@ class DetailTests(TestCase):
         response = client.get(reverse('users:detail'), **header)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_detail_cache(self):
+        '''
+        setUp에서 생성된 user의 detail endpoint에 대한 cache 생성이 되어 있어야 함.
+        '''
+        self.assertGreater(len(cache.keys('*')), 0)
+
     def test_detail_cache_response_time(self):
         '''
         2번째 요청부터는 첫 번째 요청보다 응답 속도가 빨라야 하는 게 정상 같은데... 가끔씩 실패할 때가 있다.

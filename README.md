@@ -210,3 +210,5 @@ python manage.py migrate --run-syncdb -->
     ~~- Multiprocessing, Threading, Asyncio 활용~~
 
 4. Django Debug Toolbar(https://github.com/jazzband/django-debug-toolbar)와 loadtest로 performance check
+
+5. env로 설정값 관리

@@ -17,11 +17,11 @@ from .models import User
 from .serializers import PasswordSerializer, AuthSerializer, PhoneSerializer, SigninSerializer, SignupPasswordSerializer, UserSerializer  # noqa
 from .cache import AUTH_TIMEOUT, PASSWORD_TIMEOUT, SIGNUP_TIMEOUT, make_key_for_password, make_key_for_password_auth, make_key_for_signup, make_key_for_signup_auth  # noqa
 
-'''
+"""
 Each view is responsible for doing one of two things:
 Returning an HttpResponse object containing the content for the requested page,
 or raising an exception such as Http404.
-'''
+"""
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
@@ -136,11 +136,11 @@ def users_signup_auth(request: Request):
 @extend_schema(
     tags=["user"],
     summary="회원가입",
-    description='''phone : 11자의 핸드폰 숫자 </br>
+    description="""phone : 11자의 핸드폰 숫자 </br>
                 email : 62bytes 이하의 이메일 </br>
                 nickname : 16bytes 이하의 닉네임 </br>
                 name : 32bytes 이하의 본명 </br>
-                password : 8bytes 이상 24bytes 이하의 비밀번호''',
+                password : 8bytes 이상 24bytes 이하의 비밀번호""",
     request=UserSerializer,
     responses={
         status.HTTP_400_BAD_REQUEST: OpenApiResponse(
@@ -307,8 +307,8 @@ def users_password_auth(request: Request):
 @extend_schema(
     tags=["user"],
     summary="비밀번호 재설정",
-    description='''phone : 11자의 핸드폰 번호</br>
-                new : 새로운 비밀번호''',
+    description="""phone : 11자의 핸드폰 번호</br>
+                new : 새로운 비밀번호""",
     request=PasswordSerializer,
     responses={
         status.HTTP_204_NO_CONTENT: OpenApiResponse(

@@ -6,9 +6,9 @@ from . import models
 
 
 class UserAdmin(BaseUserAdmin):
-    '''
+    """
     Register your models here.
-    '''
+    """
     ordering: Optional[Sequence[str]] = ('email', )
     fieldsets = (
         (None, {'fields': ('nickname', 'password')}),

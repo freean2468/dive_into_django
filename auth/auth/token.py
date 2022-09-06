@@ -40,14 +40,14 @@ class MyTokenRefreshView(TokenRefreshView):
 
 
 class TestAccessToken(AccessToken):
-    '''
+    """
     Test 시 lifetime을 독립적으로 자유롭게 수정
-    '''
+    """
     pass
 
 
 class TestRefreshToken(RefreshToken):
-    '''
+    """
     Test 시 lifetime을 독립적으로 자유롭게 수정
-    '''
+    """
     access_token_class = TestAccessToken

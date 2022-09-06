@@ -4,15 +4,15 @@ import re
 
 
 class UserSerializer(serializers.ModelSerializer):
-    '''
+    """
     Serializers define the API representation.
-    '''
+    """
 
     class Meta:
-        '''
+        """
         defines the metadata information that our model has (database) and
         that must be converted to the User class.
-        '''
+        """
         model = get_user_model()
         fields = (
             'pk', 'email', 'nickname', 'password', 'name', 'phone', 'created_at', 'updated_at'

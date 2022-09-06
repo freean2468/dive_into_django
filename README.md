@@ -11,6 +11,7 @@ django, DRF, memcached, postgresql 사용해 간단히 개발해 본 프로젝�
 ## 실행 명령어
 
 <!-- 1. sudo docker-compose run web django-admin startproject root. -->
+
 개발 환경은 모두 docker 컨테이너화
 
 ```bash
@@ -21,6 +22,7 @@ docker-compose up
 ## 의존성 관리
 
 ~~- 컨테이너로 가상화를 하니 poetry를 사용할 동기가 부족해진다.~~
+
 - 고려사항
   - 기술부채에 대한 고민
 
@@ -42,7 +44,6 @@ docker-compose up
 http://localhost:8001/docs/#/
 
 ![open_api_doc](https://i.imgur.com/timJRAz.png)
-
 
 ## API Sequence Diagram
 
@@ -81,6 +82,7 @@ docker exec -it dive_into_django_auth_1 /bin/bash
 python manage.py makemigrations
 python manage.py migrate
 ```
+
 <!-- 4. python manage.py makemigrations --empty --name users users -->
 
 <!-- python manage.py check -->
@@ -102,10 +104,12 @@ This is all mapped by the Django REST framework once we connect the function its
 ## Auth
 
 ~~django 기본 인증 시스템과 DRF의 내장 인증 시스템을 사용해 장고 환경에 적응해보자.~~
+
 1. DRY : JWT를 Django와 잘 녹여낸 Best Practice를 찾아보자.
-  - JWT with django-rest-framework-simplejwt(https://django-rest-framework-simplejwt.readthedocs.io/en/latest/creating_tokens_manually.html)
-    - https://medium.com/geekculture/jwt-authentication-in-django-part-1-implementing-the-backend-b7c58ab9431b
-    - https://www.remoteinning.com/blog/how-to-use-jwt-authentication-with-django-rest-framework
+
+- JWT with django-rest-framework-simplejwt(https://django-rest-framework-simplejwt.readthedocs.io/en/latest/creating_tokens_manually.html)
+  - https://medium.com/geekculture/jwt-authentication-in-django-part-1-implementing-the-backend-b7c58ab9431b
+  - https://www.remoteinning.com/blog/how-to-use-jwt-authentication-with-django-rest-framework
 
 ## TDD
 
@@ -146,7 +150,6 @@ AUTH eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
 keys *
 ```
 
-
 ## Schema
 
 https://www.django-rest-framework.org/api-guide/schemas/
@@ -165,18 +168,18 @@ drf-yasg보다 drf-spectacular가 더 업데이트가 잘 되고, OpenAPI 3.0까
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
 
-2. numbering된 migrations를 모두 삭제하고 
+2. numbering된 migrations를 모두 삭제하고
 python manage.py makemigrations
 python manage.py migrate --run-syncdb -->
 
+## Code Quality
 
-## Code Quality 
 - https://realpython.com/python-code-quality/
 - VS code linter setting : https://code.visualstudio.com/docs/python/linting
+
   - PEP8과 PEP 257 linter를 포함한 pylama가 좋겠다.
 
 - Type Hinting 추가해야 한다.
-
 
 ## 인증
 
@@ -194,11 +197,9 @@ python manage.py migrate --run-syncdb -->
 
 3. Service A 혹은 Service B 에서 SDK를 활용한 Auth Service 이용에 대한 고민은 과제 범위 빠깥이다. 이는 추후에 A, B에 대한 간단한 Service를 별도로 생각해보고 테스트해보면 좋겠다.
 
-
 ## deploy
 
 배포도 추후 도전
-
 
 ## 보완해야할 점
 
@@ -207,8 +208,26 @@ python manage.py migrate --run-syncdb -->
 ~~2. django에서 기본적으로 제공해주는 orm에서 만든 db 구조 및 해당 시스템이 어떻게 작동하는지 아직 이해가 부족하다.~~
 
 ~~3. 비동기 부분이 없다. 본인 스스로가 python 환경에서의 비동기 시스템이 어떻게 작동하는지에 대한 스터디가 더 필요하다.~~
-    ~~- Multiprocessing, Threading, Asyncio 활용~~
+~~- Multiprocessing, Threading, Asyncio 활용~~
 
 4. Django Debug Toolbar(https://github.com/jazzband/django-debug-toolbar)와 loadtest로 performance check
 
 5. env로 설정값 관리
+
+6. layer (business 로직) 분리 후 test cases for business logic 작성
+
+- The Single Responsibility Principle
+- Code Reusability
+- Code Maintenance
+
+7. Class Based View 활용
+
+8. Logout 구현 + 멀티 디바이스 테스트
+
+9. 불필요한 쿼리 횟수를 줄일 수 있는 방안 생각
+
+10. 악성 유저에 대한 가정 (보안 취약점)
+
+11. TODO 관리 및 처리
+
+12. 별도 문서화
